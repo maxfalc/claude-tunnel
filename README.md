@@ -143,7 +143,13 @@ Per-project fields:
 
 ## Examples
 
-Once two projects (let's call them `frontend` and `backend`) are configured, you can say things like these in your Claude Code chat:
+You don't need to memorize tool names — Claude introspects the server. Start with:
+
+> *"what claude-tunnel tools do I have available?"*
+>
+> *"list my configured tunnel projects"*
+
+Once you have two projects configured (let's call them `frontend` and `backend`), the natural uses look like:
 
 > *"ask the backend project for a one-sentence summary from its CLAUDE.md"*
 >
@@ -153,7 +159,7 @@ Once two projects (let's call them `frontend` and `backend`) are configured, you
 >
 > *"reset the backend session, then ask it fresh: what's the latest in src/api/handlers?"*
 >
-> *"list my configured tunnel projects"*
+> *"add a tunnel project called `my-app` at `~/code/my-app` using claude-opus-4-7"*
 
 The persistent session per project means follow-up questions stay coherent — Claude in the target project remembers the prior turns.
 
