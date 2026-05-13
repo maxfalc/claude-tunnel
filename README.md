@@ -42,6 +42,8 @@ If your client doesn't have the `claude` CLI, edit `~/.claude.json` directly and
 }
 ```
 
+**Windows note:** if the server fails to start with a "command not found" error, change `"command": "npx"` to `"command": "npx.cmd"`. Windows requires the file extension when MCP clients spawn the process without a shell wrapper — this affects users of `fnm`, `nvm-windows`, and most standard Node installs.
+
 Reload your VSCode window after registering. The five tools above will appear as `mcp__claude-tunnel__*`.
 
 ### From source (local development)
