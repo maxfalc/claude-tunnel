@@ -1,0 +1,37 @@
+{
+  "name": "claude-tunnel",
+  "version": "0.1.0",
+  "description": "MCP server that lets a Claude Code session delegate questions to a Claude running on a different local project, via the Agent SDK. Installs via `npx github:maxfalc/claude-tunnel`.",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "claude-tunnel-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "tsconfig.json"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxfalc/claude-tunnel.git"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "prepare": "tsc -p .",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "latest",
+    "@modelcontextprotocol/sdk": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "typescript": "^5.4.0"
+  }
+}
