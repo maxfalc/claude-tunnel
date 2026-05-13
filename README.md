@@ -26,11 +26,21 @@ You need: Node ≥18 and Claude Code installed and authenticated.
 
 Run this in any terminal:
 
+**macOS / Linux:**
+
 ```sh
 npx -y github:maxfalc/claude-tunnel install
 ```
 
-It detects your OS, writes the right entry into `~/.claude.json` (using `npx.cmd` on Windows, `npx` elsewhere — yes, that distinction matters), and tells you what to do next. The first call takes ~30 seconds while npx clones the repo and builds `dist/`. Subsequent invocations are fast.
+**Windows (PowerShell, cmd, or git-bash):**
+
+```powershell
+npx.cmd -y github:maxfalc/claude-tunnel install
+```
+
+(On Windows, `npx.cmd` is the safer form — bare `npx` resolves to `npx.ps1` in PowerShell, which can be blocked by execution policy on locked-down machines. `npx.cmd` works in every Windows terminal.)
+
+The installer detects your OS, writes the right entry into `~/.claude.json` (using `npx.cmd` on Windows, `npx` elsewhere — yes, that distinction matters for how Claude Code spawns the server), and tells you what to do next. The first call takes ~30 seconds while npx clones the repo and builds `dist/`. Subsequent invocations are fast.
 
 After installing, reload your VSCode window (Ctrl+Shift+P → *Developer: Reload Window*). The five tools then appear as `mcp__claude-tunnel__*`.
 
@@ -39,6 +49,8 @@ To remove the registration later:
 ```sh
 npx -y github:maxfalc/claude-tunnel install --uninstall
 ```
+
+(Use `npx.cmd` instead of `npx` on Windows for the same reason as above.)
 
 ### Manual registration (if you prefer)
 

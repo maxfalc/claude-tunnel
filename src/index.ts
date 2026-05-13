@@ -302,7 +302,8 @@ async function runInstaller(argv: string[]): Promise<void> {
 
     let config: Record<string, unknown> = {};
     try {
-        config = JSON.parse(await fs.readFile(configPath, 'utf8'));
+        const raw = await fs.readFile(configPath, 'utf8');
+        config = JSON.parse(raw.replace(/^﻿/, ''));
     } catch (e: unknown) {
         if ((e as NodeJS.ErrnoException)?.code !== 'ENOENT') {
             console.error(`[claude-tunnel install] could not read ${configPath}: ${(e as Error).message}`);
