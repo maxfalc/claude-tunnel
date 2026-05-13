@@ -277,7 +277,70 @@ server.registerTool(
     }
 );
 
-async function main(): Promise<void> {
+async function runInstaller(argv: string[]): Promise<void> {
+    let configPath = path.join(os.homedir(), '.claude.json');
+    let remove = false;
+    for (let i = 0; i < argv.length; i++) {
+        const a = argv[i];
+        if (a === '--config' && argv[i + 1]) {
+            configPath = argv[i + 1];
+            i++;
+        } else if (a === '--uninstall') {
+            remove = true;
+        } else if (a === '--help' || a === '-h') {
+            console.log(`Usage:
+  claude-tunnel-mcp install [--config <path>]    Register the MCP server in ~/.claude.json (or a custom path)
+  claude-tunnel-mcp install --uninstall          Remove the mcpServers.claude-tunnel entry
+  claude-tunnel-mcp                              Run the MCP server (default; spawned by Claude Code)`);
+            return;
+        }
+    }
+
+    const isWin = process.platform === 'win32';
+    const command = isWin ? 'npx.cmd' : 'npx';
+    const args = ['-y', 'github:maxfalc/claude-tunnel'];
+
+    let config: Record<string, unknown> = {};
+    try {
+        config = JSON.parse(await fs.readFile(configPath, 'utf8'));
+    } catch (e: unknown) {
+        if ((e as NodeJS.ErrnoException)?.code !== 'ENOENT') {
+            console.error(`[claude-tunnel install] could not read ${configPath}: ${(e as Error).message}`);
+            process.exit(1);
+        }
+    }
+
+    const mcpServers = (config.mcpServers as Record<string, unknown> | undefined) ?? {};
+    const existed = 'claude-tunnel' in mcpServers;
+
+    if (remove) {
+        if (!existed) {
+            console.log(`[claude-tunnel install] no existing claude-tunnel entry in ${configPath}; nothing to remove.`);
+            return;
+        }
+        delete mcpServers['claude-tunnel'];
+        config.mcpServers = mcpServers;
+        await fs.writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
+        console.log(`[claude-tunnel install] removed claude-tunnel from ${configPath}`);
+        console.log(`Reload your VSCode window for the change to take effect.`);
+        return;
+    }
+
+    mcpServers['claude-tunnel'] = { type: 'stdio', command, args };
+    config.mcpServers = mcpServers;
+    await fs.writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
+
+    console.log(`[claude-tunnel install] ${existed ? 'updated' : 'added'} claude-tunnel in ${configPath}`);
+    console.log(`  platform: ${process.platform}`);
+    console.log(`  command:  ${command} ${args.join(' ')}`);
+    console.log(``);
+    console.log(`Next steps:`);
+    console.log(`  1. Reload your VSCode window: Ctrl+Shift+P → "Developer: Reload Window"`);
+    console.log(`  2. In any Claude Code chat, try: "list my configured tunnel projects"`);
+    console.log(`  3. If empty, add one: "add a tunnel project called my-app at /abs/path/to/my-app"`);
+}
+
+async function runServer(): Promise<void> {
     await fs.mkdir(CONFIG_DIR, { recursive: true });
     try {
         await fs.access(PROJECTS_FILE);
@@ -287,6 +350,27 @@ async function main(): Promise<void> {
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
+}
+
+async function main(): Promise<void> {
+    const subcommand = process.argv[2];
+    if (subcommand === 'install') {
+        await runInstaller(process.argv.slice(3));
+        return;
+    }
+    if (subcommand === '--help' || subcommand === '-h') {
+        console.log(`claude-tunnel MCP server
+
+Usage:
+  claude-tunnel-mcp                              Run the MCP server over stdio (default)
+  claude-tunnel-mcp install [--config <path>]    Register the MCP server in ~/.claude.json
+  claude-tunnel-mcp install --uninstall          Remove the registration
+
+The server is normally not run by hand — Claude Code spawns it.
+The install subcommand is the one you run interactively, once per machine.`);
+        return;
+    }
+    await runServer();
 }
 
 main().catch((err) => {

@@ -24,13 +24,25 @@ A handful of tools your Claude sessions can call:
 
 You need: Node ≥18 and Claude Code installed and authenticated.
 
+Run this in any terminal:
+
 ```sh
-claude mcp add --scope user claude-tunnel npx -- -y github:maxfalc/claude-tunnel
+npx -y github:maxfalc/claude-tunnel install
 ```
 
-First call takes ~30 seconds while npx clones the repo and the `prepare` script builds `dist/`. Subsequent calls are fast.
+It detects your OS, writes the right entry into `~/.claude.json` (using `npx.cmd` on Windows, `npx` elsewhere — yes, that distinction matters), and tells you what to do next. The first call takes ~30 seconds while npx clones the repo and builds `dist/`. Subsequent invocations are fast.
 
-If your client doesn't have the `claude` CLI, edit `~/.claude.json` directly and add:
+After installing, reload your VSCode window (Ctrl+Shift+P → *Developer: Reload Window*). The five tools then appear as `mcp__claude-tunnel__*`.
+
+To remove the registration later:
+
+```sh
+npx -y github:maxfalc/claude-tunnel install --uninstall
+```
+
+### Manual registration (if you prefer)
+
+If you'd rather edit `~/.claude.json` by hand, add:
 
 ```json
 "mcpServers": {
@@ -42,9 +54,13 @@ If your client doesn't have the `claude` CLI, edit `~/.claude.json` directly and
 }
 ```
 
-**Windows note:** if the server fails to start with a "command not found" error, change `"command": "npx"` to `"command": "npx.cmd"`. Windows requires the file extension when MCP clients spawn the process without a shell wrapper — this affects users of `fnm`, `nvm-windows`, and most standard Node installs.
+**Windows note:** change `"command": "npx"` to `"command": "npx.cmd"`. Windows requires the file extension when Claude Code spawns the MCP server without a shell wrapper — affects users of `fnm`, `nvm-windows`, and most standard Node installs. The `install` subcommand above handles this for you automatically.
 
-Reload your VSCode window after registering. The five tools above will appear as `mcp__claude-tunnel__*`.
+You can also use the `claude` CLI if you have it:
+
+```sh
+claude mcp add --scope user claude-tunnel npx -- -y github:maxfalc/claude-tunnel
+```
 
 ### From source (local development)
 
