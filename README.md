@@ -22,10 +22,9 @@ A handful of tools your Claude sessions can call:
 
 ### On a new machine
 
-You need: Node ≥18, the `gh` CLI (authenticated to your GitHub account so npx can clone the private repo), and Claude Code installed and authenticated.
+You need: Node ≥18 and Claude Code installed and authenticated.
 
 ```sh
-gh auth login   # one-time, if not already done
 claude mcp add --scope user claude-tunnel npx -- -y github:maxfalc/claude-tunnel
 ```
 
